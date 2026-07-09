@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  telemetry-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    networks:
+      - telemetry-mesh
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - telemetry-mesh
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - telemetry-mesh
+
+networks:
+  telemetry-mesh:
+    driver: bridge
